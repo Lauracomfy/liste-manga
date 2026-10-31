@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index des Mangas - Requêtes</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e2e; color: #cdd6f4; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; }
+        h1 { color: #cba6f7; text-align: center; }
+        #searchBar { width: 100%; padding: 15px; font-size: 16px; border-radius: 8px; border: 1px solid #45475a; background: #313244; color: #cdd6f4; margin-bottom: 20px; box-sizing: border-box; }
+        #searchBar:focus { outline: none; border-color: #cba6f7; }
+        .manga-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
+        .manga-card { background: #313244; padding: 15px; border-radius: 8px; border-left: 4px solid #cba6f7; display: flex; flex-direction: column; justify-content: space-between; }
+        .manga-title { font-weight: bold; font-size: 1.1em; margin-bottom: 5px; color: #f5e0dc; }
+        .manga-info { font-size: 0.9em; color: #a6adc8; margin-bottom: 10px; }
+        .badge { background: #45475a; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px; }
+        .actions { display: flex; gap: 10px; margin-top: 10px; }
+        button { flex: 1; padding: 8px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-copy { background: #89b4fa; color: #11111b; }
+        .btn-copy:hover { background: #b4befe; }
+        .btn-request { background: #a6e3a1; color: #11111b; }
+        .btn-request:hover { background: #94e2d5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Demandes de Mangas</h1>
+        <input type="text" id="searchBar" placeholder="Rechercher un manga (ex: One Piece, Seinen...)">
+        
+        <div class="manga-list" id="mangaList">
+            <!-- Les cartes vont s'afficher ici -->
+        </div>
+    </div>
+
+    <script>
+        let mangas = [];
+
+        // Charger les données depuis le JSON
+        fetch('mangas.json')
+            .then(response => response.json())
+            .then(data => {
+                mangas = data;
+                afficherMangas(mangas);
+            });
+
+        function afficherMangas(liste) {
+            const container = document.getElementById('mangaList');
+            container.innerHTML = '';
+            
+            liste.forEach(manga => {
+                const card = document.createElement('div');
+                card.className = 'manga-card';
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="manga-title">${manga.titre}</div>
+                        <div class="manga-info">
+                            ${manga.categorie ? `<span class="badge">${manga.categorie}</span>` : ''}
+                            <span class="badge">${manga.tomes}</span>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-copy" onclick="copier('${manga.titre.replace(/'/g, "\\'")}')">Copier le titre</button>
+                        <button class="btn-request" onclick="demander('${manga.titre.replace(/'/g, "\\'")}')">Demander</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Barre de recherche
+        document.getElementById('searchBar').addEventListener('input', (e) => {
+            const terme = e.target.value.toLowerCase();
+            const filtres = mangas.filter(m => 
+                m.titre.toLowerCase().includes(terme) || 
+                m.categorie.toLowerCase().includes(terme)
+            );
+            afficherMangas(filtres);
+        });
+
+        // Fonction pour copier le titre
+        function copier(titre) {
+            navigator.clipboard.writeText(titre).then(() => {
+                alert(`"${titre}" copié dans le presse-papiers !`);
+            });
+        }
+
+        // Fonction de requête (à personnaliser)
+        function demander(titre) {
+            // C'est ici que tu pourras mettre ta logique !
+            // Par exemple, ouvrir un lien vers un serveur Discord, ou envoyer un mail.
+            alert(`Demande envoyée pour : ${titre}`);
+        }
+    </script>
+</body>
+</html>
