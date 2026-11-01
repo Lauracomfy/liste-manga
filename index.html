@@ -3,94 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index des Mangas - Requêtes</title>
+    <title>Index Mangas - MAL Style</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e2e; color: #cdd6f4; margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: auto; }
-        h1 { color: #cba6f7; text-align: center; }
-        #searchBar { width: 100%; padding: 15px; font-size: 16px; border-radius: 8px; border: 1px solid #45475a; background: #313244; color: #cdd6f4; margin-bottom: 20px; box-sizing: border-box; }
-        #searchBar:focus { outline: none; border-color: #cba6f7; }
-        .manga-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
-        .manga-card { background: #313244; padding: 15px; border-radius: 8px; border-left: 4px solid #cba6f7; display: flex; flex-direction: column; justify-content: space-between; }
-        .manga-title { font-weight: bold; font-size: 1.1em; margin-bottom: 5px; color: #f5e0dc; }
-        .manga-info { font-size: 0.9em; color: #a6adc8; margin-bottom: 10px; }
-        .badge { background: #45475a; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 5px; }
-        .actions { display: flex; gap: 10px; margin-top: 10px; }
-        button { flex: 1; padding: 8px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .btn-copy { background: #89b4fa; color: #11111b; }
-        .btn-copy:hover { background: #b4befe; }
-        .btn-request { background: #a6e3a1; color: #11111b; }
-        .btn-request:hover { background: #94e2d5; }
+        /* --- RESET ET BASE --- */
+        * { box-sizing: border-box; }
+        body { 
+            font-family: Verdana, Arial, sans-serif; 
+            background-color: #1c1c1c; 
+            color: #d3d3d3; 
+            margin: 0; 
+            padding: 0; 
+            font-size: 13px;
+        }
+        a { color: #2e51a2; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* --- EN-TÊTE --- */
+        .header {
+            background-color: #2e51a2;
+            padding: 10px 20px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 3px solid #1a3a7a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- LAYOUT PRINCIPAL --- */
+        .main-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+            gap: 20px;
+        }
+
+        /* --- BARRE LATÉRALE (FILTRES) --- */
+        .sidebar {
+            width: 225px;
+            flex-shrink: 0;
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 4px;
+            height: fit-content;
+        }
+        .sidebar h3 {
+            margin-top: 0;
+            color: #2e51a2;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+            font-size: 14px;
+        }
+        .search-box {
+            width: 100%;
+            padding: 8px;
+            background: #1c1c1c;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 3px;
+            margin-bottom: 15px;
+        }
+        .search-box:focus {
+            outline: none;
+            border-color: #2e51a2;
+        }
+
+        /* --- LISTE DES RÉSULTATS --- */
+        .results {
+            flex-grow: 1;
+        }
+
+        /* En-tête du tableau */
+        .result-header {
+            display: flex;
+            background: #2a2a2a;
+            padding: 8px 10px;
+            border-radius: 4px 4px 0 0;
+            font-weight: bold;
+            font-size: 12px;
+            color: #aaa;
+            border-bottom: 1px solid #444;
+        }
+        .result-header .col-title { flex: 1; }
+        .result-header .col-type { width: 100px; text-align: center; }
+        .result-header .col-vol { width: 80px; text-align: center; }
+        .result-header .col-action { width: 100px; text-align: center; }
+
+        /* Ligne de résultat */
+        .manga-item {
+            display: flex;
+            align-items: center;
+            background: #2a2a2a;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            padding: 10px;
+            gap: 15px;
+        }
+        .manga-item:hover {
+            border-color: #2e51a2;
+            background: #333;
+        }
+
+        /* Couverture */
+        .cover-container {
+            width: 50px;
+            height: 70px;
+            flex-shrink: 0;
+            background: #1c1c1c;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .cover-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Titre et synopsis */
+        .info-container {
+            flex: 1;
+            min-width: 0;
+        }
+        .title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2e51a2;
+            margin-bottom: 3px;
+            display: block;
+        }
+        .title:hover { text-decoration: underline; }
+        .synopsis {
+            color: #aaa;
+            font-size: 11px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Colonnes Type, Vol, Action */
+        .col-type {
+            width: 100px;
+            text-align: center;
+            font-size: 12px;
+            color: #ccc;
+        }
+        .col-vol {
+            width: 80px;
+            text-align: center;
+            font-size: 12px;
+            color: #ccc;
+        }
+        .col-action {
+            width: 100px;
+            text-align: center;
+        }
+        .btn-request {
+            background: #2e51a2;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 11px;
+            transition: 0.2s;
+            width: 100%;
+        }
+        .btn-request:hover {
+            background: #3b66c4;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .result-header { display: none; }
+            .manga-item { flex-wrap: wrap; }
+            .col-type, .col-vol, .col-action { width: auto; text-align: left; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📚 Demandes de Mangas</h1>
-        <input type="text" id="searchBar" placeholder="Rechercher un manga (ex: One Piece, Seinen...)">
-        
-        <div class="manga-list" id="mangaList">
-            <!-- Les cartes vont s'afficher ici -->
+
+    <div class="header">
+        <span>Manga Index</span>
+        <span style="font-size: 12px; font-weight: normal;">Recherchez et demandez vos mangas</span>
+    </div>
+
+    <div class="main-container">
+        <!-- Colonne de gauche : Filtres -->
+        <div class="sidebar">
+            <h3>Recherche</h3>
+            <input type="text" id="searchBar" class="search-box" placeholder="Titre du manga...">
+            <p style="font-size: 11px; color: #888;">
+                Tapez un nom pour filtrer la liste.
+            </p>
+        </div>
+
+        <!-- Colonne de droite : Résultats -->
+        <div class="results">
+            <!-- En-tête du tableau -->
+            <div class="result-header">
+                <div class="col-title">Titre</div>
+                <div class="col-type">Genre</div>
+                <div class="col-vol">Tomes</div>
+                <div class="col-action">Action</div>
+            </div>
+
+            <!-- Liste des mangas -->
+            <div id="mangaList">
+                <p style="text-align: center; color: #666; padding: 20px;">Chargement de la liste...</p>
+            </div>
         </div>
     </div>
 
     <script>
         let mangas = [];
 
-        // Charger les données depuis le JSON
+        // 1. Chargement du fichier JSON (assure-toi que le nom correspond à ton fichier)
         fetch('mangas.json')
             .then(response => response.json())
             .then(data => {
                 mangas = data;
                 afficherMangas(mangas);
+            })
+            .catch(err => {
+                document.getElementById('mangaList').innerHTML = '<p style="color:red; text-align:center;">Erreur : impossible de charger mangas.json.</p>';
+                console.error(err);
             });
 
+        // 2. Affichage des mangas
         function afficherMangas(liste) {
             const container = document.getElementById('mangaList');
             container.innerHTML = '';
-            
+
+            if (liste.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Aucun résultat.</p>';
+                return;
+            }
+
             liste.forEach(manga => {
-                const card = document.createElement('div');
-                card.className = 'manga-card';
+                const div = document.createElement('div');
+                div.className = 'manga-item';
                 
-                card.innerHTML = `
-                    <div>
-                        <div class="manga-title">${manga.titre}</div>
-                        <div class="manga-info">
-                            ${manga.categorie ? `<span class="badge">${manga.categorie}</span>` : ''}
-                            <span class="badge">${manga.tomes}</span>
-                        </div>
+                // Image (ou placeholder)
+                const imageHtml = manga.cover 
+                    ? `<img src="${manga.cover}" alt="Cover" loading="lazy">` 
+                    : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#444; font-size:9px;">N/A</div>`;
+
+                // Synopsis (ou placeholder)
+                const synopsisHtml = manga.synopsis 
+                    ? manga.synopsis.substring(0, 120) + '...' 
+                    : "Aucun synopsis disponible.";
+
+                // Échappement des apostrophes pour le JavaScript
+                const titreEscaped = manga.titre.replace(/'/g, "\\'");
+
+                div.innerHTML = `
+                    <div class="cover-container">
+                        ${imageHtml}
                     </div>
-                    <div class="actions">
-                        <button class="btn-copy" onclick="copier('${manga.titre.replace(/'/g, "\\'")}')">Copier le titre</button>
-                        <button class="btn-request" onclick="demander('${manga.titre.replace(/'/g, "\\'")}')">Demander</button>
+                    <div class="info-container">
+                        <a href="#" class="title">${manga.titre}</a>
+                        <div class="synopsis">${synopsisHtml}</div>
+                    </div>
+                    <div class="col-type">
+                        ${manga.categorie ? manga.categorie : '-'}
+                    </div>
+                    <div class="col-vol">
+                        ${manga.tomes ? manga.tomes : '-'}
+                    </div>
+                    <div class="col-action">
+                        <button class="btn-request" onclick="demander('${titreEscaped}')">Demander</button>
                     </div>
                 `;
-                container.appendChild(card);
+                container.appendChild(div);
             });
         }
 
-        // Barre de recherche
+        // 3. Recherche
         document.getElementById('searchBar').addEventListener('input', (e) => {
             const terme = e.target.value.toLowerCase();
             const filtres = mangas.filter(m => 
                 m.titre.toLowerCase().includes(terme) || 
-                m.categorie.toLowerCase().includes(terme)
+                (m.categorie && m.categorie.toLowerCase().includes(terme))
             );
             afficherMangas(filtres);
         });
 
-        // Fonction pour copier le titre
-        function copier(titre) {
-            navigator.clipboard.writeText(titre).then(() => {
-                alert(`"${titre}" copié dans le presse-papiers !`);
-            });
-        }
+        // 4. Envoi de la demande à Google Forms (fonctionne sur GitHub Pages)
+        async function demander(titre) {
+            const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeAW8t8xuYImQZRUYhQItXV9vQWfDAziDF2xCGjvj7B4-EDkQ/formResponse";
+            const ENTRY_ID = "entry.1017598744"; 
+            
+            const formData = new URLSearchParams();
+            formData.append(ENTRY_ID, titre);
 
-        // Fonction de requête (à personnaliser)
-        function demander(titre) {
-            // C'est ici que tu pourras mettre ta logique !
-            // Par exemple, ouvrir un lien vers un serveur Discord, ou envoyer un mail.
-            alert(`Demande envoyée pour : ${titre}`);
+            try {
+                await fetch(GOOGLE_FORM_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
+                alert(`Demande envoyée pour : ${titre}`);
+            } catch (e) {
+                console.error("Erreur d'envoi", e);
+                alert("Erreur lors de l'envoi de la demande.");
+            }
         }
     </script>
 </body>
