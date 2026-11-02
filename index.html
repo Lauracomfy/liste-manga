@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>retro slop</title>
     <style>
-        /* --- RESET ET BASE --- */
         * { box-sizing: border-box; }
         body { 
             font-family: Verdana, Arial, sans-serif; 
@@ -18,7 +17,6 @@
         a { color: #2e51a2; text-decoration: none; }
         a:hover { text-decoration: underline; }
 
-        /* --- EN-TÊTE --- */
         .header {
             background-color: #2e51a2;
             padding: 10px 20px;
@@ -31,7 +29,6 @@
             align-items: center;
         }
 
-        /* --- LAYOUT PRINCIPAL --- */
         .main-container {
             display: flex;
             max-width: 1200px;
@@ -40,7 +37,6 @@
             gap: 20px;
         }
 
-        /* --- BARRE LATÉRALE (FILTRES) --- */
         .sidebar {
             width: 225px;
             flex-shrink: 0;
@@ -70,12 +66,10 @@
             border-color: #2e51a2;
         }
 
-        /* --- LISTE DES RÉSULTATS --- */
         .results {
             flex-grow: 1;
         }
 
-        /* En-tête du tableau */
         .result-header {
             display: flex;
             background: #2a2a2a;
@@ -91,7 +85,6 @@
         .result-header .col-vol { width: 80px; text-align: center; }
         .result-header .col-action { width: 100px; text-align: center; }
 
-        /* Ligne de résultat */
         .manga-item {
             display: flex;
             align-items: center;
@@ -107,7 +100,6 @@
             background: #333;
         }
 
-        /* Couverture */
         .cover-container {
             width: 50px;
             height: 70px;
@@ -122,7 +114,6 @@
             object-fit: cover;
         }
 
-        /* Titre et synopsis */
         .info-container {
             flex: 1;
             min-width: 0;
@@ -145,7 +136,6 @@
             overflow: hidden;
         }
 
-        /* Colonnes Type, Vol, Action */
         .col-type {
             width: 100px;
             text-align: center;
@@ -178,7 +168,6 @@
             background: #3b66c4;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .main-container { flex-direction: column; }
             .sidebar { width: 100%; }
@@ -221,7 +210,6 @@
     <script>
         let mangas = [];
 
-        // 1. Chargement du fichier JSON (assure-toi que le nom correspond à ton fichier)
         fetch('mangas.json')
             .then(response => response.json())
             .then(data => {
@@ -233,7 +221,6 @@
                 console.error(err);
             });
 
-        // 2. Affichage des mangas
         function afficherMangas(liste) {
             const container = document.getElementById('mangaList');
             container.innerHTML = '';
@@ -247,17 +234,14 @@
                 const div = document.createElement('div');
                 div.className = 'manga-item';
                 
-                // Image (ou placeholder)
                 const imageHtml = manga.cover 
                     ? `<img src="${manga.cover}" alt="Cover" loading="lazy">` 
                     : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#444; font-size:9px;">N/A</div>`;
 
-                // Synopsis (ou placeholder)
                 const synopsisHtml = manga.synopsis 
                     ? manga.synopsis.substring(0, 120) + '...' 
                     : "Aucun synopsis disponible.";
 
-                // Échappement des apostrophes pour le JavaScript
                 const titreEscaped = manga.titre.replace(/'/g, "\\'");
 
                 div.innerHTML = `
@@ -282,7 +266,6 @@
             });
         }
 
-        // 3. Recherche
         document.getElementById('searchBar').addEventListener('input', (e) => {
             const terme = e.target.value.toLowerCase();
             const filtres = mangas.filter(m => 
@@ -292,7 +275,6 @@
             afficherMangas(filtres);
         });
 
-        // 4. Envoi de la demande à Google Forms (fonctionne sur GitHub Pages)
         async function demander(titre) {
             const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeAW8t8xuYImQZRUYhQItXV9vQWfDAziDF2xCGjvj7B4-EDkQ/formResponse";
             const ENTRY_ID = "entry.1017598744"; 
